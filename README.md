@@ -20,7 +20,9 @@ pip install pymavlink
 
 **To run**
 ```
-cd NGCP/pymavlink/ArduPlane
+cd NGCP/pymavlink
+mkdir ArduPlane
+cd ArduPlane
 sim_vechile --map --console
 ```
 
