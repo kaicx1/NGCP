@@ -12,6 +12,8 @@ Tools/environment_install/install-prereqs-ubuntu.sh -y
 . ~/.profile
 ```
 
+OR you can go to this google drive link: https://drive.google.com/file/d/1buy2GcVNB3jInE9abCZTOaj97sAnSFyX/view 
+
 **Install pymavlink**
 ```
 pip install pymavlink
