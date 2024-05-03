@@ -28,5 +28,5 @@ sim_vehicle --map --console
 
 **IN A DIFFERENT TERMINAL**
 ```
-python3 {any_sript.py}
+python3 {any_script.py}
 ```
