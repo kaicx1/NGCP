@@ -90,6 +90,11 @@ def flyThrough(latitude: float, longitude: float,):
                                          mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, 0, 1, 0, 1, int(latitude * 10**7), int(longitude * 10**7), 200)
      print("waypoint set to " + str(latitude) + ", " + str(longitude) + ", 200")
 
+def geofence(altitude: int, radius: int):
+      master.mav.command_int_send(master.target_system, master.target_component,
+					  mavutil.mavlink.MAV_FRAME_GLOBAL,
+                                         mavutil.mavlink.MAV_CMD_DO_FENCE_ENABLE, 1)
+
 # finds the most common set of coordinates
 def most_common_coordinates_separate(latitudes, longitudes, tolerance=1e-6):
     # Round coordinates to a certain tolerance level
@@ -104,3 +109,4 @@ def most_common_coordinates_separate(latitudes, longitudes, tolerance=1e-6):
     most_common_longitude, _ = longitude_counter.most_common(1)[0]
 
     return most_common_latitude, most_common_longitude
+
