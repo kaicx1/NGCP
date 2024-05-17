@@ -34,6 +34,13 @@ def changemode(Mode):
         mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED,
         mode_id)
     print("Mode changed to "+ Mode)
+# what do you think this does
+def getMode():
+    msg = str(master.recv_match(type='HEARTBEAT', blocking =True))
+    msg =  msg.split(",")
+    mode_id = [int(i) for i in msg[3].split() if i.isdigit()]
+    return int(mode_id[0])
+
 
 # what do you think this does
 def armplane():
@@ -104,7 +111,7 @@ def geofence(altitude: int, radius: int):
 def dropPayload():
     master.mav.command_int_send(master.target_system, master.target_component,
 					  mavutil.mavlink.MAV_FRAME_GLOBAL,
-                                         mavutil.mavlink.MAV_CMD_DO_SET_SERVO, 0, 0, 183, 0, 7, 2000, 0, 0, 0, 0, 0)
+                                         mavutil.mavlink.MAV_CMD_DO_PARACHUTE, 1, 0, 0, 0, 0, 0, 0, 0)
 
 
 
