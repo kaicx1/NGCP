@@ -1,4 +1,5 @@
 import sys
+import time
 from geopy.distance import geodesic
 from collections import Counter
 from pymavlink import mavutil
@@ -41,6 +42,7 @@ def armplane():
     print(msg)
 
 # DIRECTIONAL FUNCTIONS THAT TELL THE PLANE WHERE TO GO
+# ALTITUDE IS ALWAYS IN METERS BECAUSE THE IMPERIAL SYSTEM KINDA DOOKIE MAN, also mavlink uses meters
 
 # makes the plane take off you dummy
 def takeoffplane():
@@ -62,38 +64,63 @@ def takeoffplane():
 def goHome():
       master.mav.command_int_send(master.target_system, master.target_component,
 					  mavutil.mavlink.MAV_FRAME_GLOBAL,
-                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, -1, 1, 15, 1, 0, 0, 200)
+                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, -1, 1, 15, 1, 0, 0, 61)
 
-      print("waypoint set to 0, 0, 200")
+      print("waypoint set to home")
 
 # go place bruh (asks for user input for the radius)
 def missionStart(latitude: float, longitude: float):
       radius = input("Enter radius: ")
       master.mav.command_int_send(master.target_system, master.target_component,
 					  mavutil.mavlink.MAV_FRAME_GLOBAL,
-                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, -1, 1, float(radius), 1, int(latitude * 10**7), int(longitude * 10**7), 200)
+                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, -1, 1, float(radius), 1, int(latitude * 10**7), int(longitude * 10**7), 61)
 
-      print("waypoint set to " + str(latitude) + ", " + str(longitude) + ", 200")
+      print("waypoint set to " + str(latitude) + ", " + str(longitude) + ", 61")
 
 # go place bruh (preset input for the radius)
 def missionStartR(latitude: float, longitude: float, radius: float):
       master.mav.command_int_send(master.target_system, master.target_component,
 					  mavutil.mavlink.MAV_FRAME_GLOBAL,
-                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, -1, 1, float(radius), 1, int(latitude * 10**7), int(longitude * 10**7), 200)
+                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, -1, 1, float(radius), 1, int(latitude * 10**7), int(longitude * 10**7), 61)
 
-      print("waypoint set to " + str(latitude) + ", " + str(longitude) + ", 200")
+      print("waypoint set to " + str(latitude) + ", " + str(longitude) + ", 61")
 
 # basically missionStart, but flies through instead of loitering
 def flyThrough(latitude: float, longitude: float,):
      master.mav.command_int_send(master.target_system, master.target_component,
 					  mavutil.mavlink.MAV_FRAME_GLOBAL,
-                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, 0, 1, 0, 1, int(latitude * 10**7), int(longitude * 10**7), 200)
-     print("waypoint set to " + str(latitude) + ", " + str(longitude) + ", 200")
+                                         mavutil.mavlink.MAV_CMD_DO_REPOSITION, 0, 0, 0, 1, 0, 1, int(latitude * 10**7), int(longitude * 10**7), 19)
+     print("waypoint set to " + str(latitude) + ", " + str(longitude) + ", 19")
 
+
+# FUNCTIONAL STUFF OF THE PLANE
+# enables geofence lmao
 def geofence(altitude: int, radius: int):
       master.mav.command_int_send(master.target_system, master.target_component,
 					  mavutil.mavlink.MAV_FRAME_GLOBAL,
                                          mavutil.mavlink.MAV_CMD_DO_FENCE_ENABLE, 1)
+
+# what do you think this does
+def dropPayload():
+    master.mav.command_int_send(master.target_system, master.target_component,
+					  mavutil.mavlink.MAV_FRAME_GLOBAL,
+                                         mavutil.mavlink.MAV_CMD_DO_SET_SERVO, 0, 0, 183, 0, 7, 2000, 0, 0, 0, 0, 0)
+
+
+
+# Finds the drop point for the plane, in which it drops a payload
+def findDropPoint(targetLat: float, targetLong: float):
+    # CHANGE THIS WITH THE MATLAB ALGORITHM
+    lowLat, highLat = targetLat-.5, targetLat+.5
+    lowLong, highLong = targetLong-.5, targetLong+.5
+    #
+    while(1):
+        curLat = 0
+        curLong = 0
+        if (lowLat < curLat and highLat > curLat and lowLong < curLong and highLong > curLong):
+            dropPayload()
+            break
+        time.sleep(1)
 
 # finds the most common set of coordinates
 def most_common_coordinates_separate(latitudes, longitudes, tolerance=1e-6):
@@ -109,4 +136,3 @@ def most_common_coordinates_separate(latitudes, longitudes, tolerance=1e-6):
     most_common_longitude, _ = longitude_counter.most_common(1)[0]
 
     return most_common_latitude, most_common_longitude
-
