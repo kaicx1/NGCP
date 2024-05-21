@@ -36,11 +36,21 @@ def changemode(Mode):
     print("Mode changed to "+ Mode)
 # what do you think this does
 def getMode():
-    msg = str(master.recv_match(type='HEARTBEAT', blocking =True))
+    msg = str(master.recv_match(type='HEARTBEAT', blocking = True))
     msg =  msg.split(",")
     mode_id = [int(i) for i in msg[3].split() if i.isdigit()]
     return int(mode_id[0])
-
+# gets latitude, longititude, and relative altitude
+def getPosition():
+     position = str(master.recv_match(type="GLOBAL_POSITION_INT", blocking = True))
+     position = position.split(",") # 10**7
+     lat = [int(i) for i in position[1].split() if i.lstrip().lstrip("-").isdigit()]
+     lat = float(lat[0])/10**7
+     longt = [int(i) for i in position[2].split() if i.lstrip().lstrip("-").isdigit()]
+     longt = longt[0]/10**7
+     alt = [int(i) for i in position[4].split() if i.lstrip().lstrip("-").isdigit()]
+     alt = alt[0]/10**3
+     return lat, longt, alt
 
 # what do you think this does
 def armplane():
