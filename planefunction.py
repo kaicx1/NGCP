@@ -111,12 +111,15 @@ def flyThrough(latitude: float, longitude: float,):
 
 
 # FUNCTIONAL STUFF OF THE PLANE
-# enables geofence lmao
+# enables cylindrical geofence
 def geofence(altitude: int, radius: int):
       master.mav.command_int_send(master.target_system, master.target_component,
 					  mavutil.mavlink.MAV_FRAME_GLOBAL,
-                                         mavutil.mavlink.MAV_CMD_DO_FENCE_ENABLE, 1)
-
+                                         mavutil.mavlink.MAV_CMD_DO_FENCE_ENABLE, 1, 1, 0, 0, 0, 0, 0)
+      
+      master.mav.command_int_send(master.target_system, master.target_component,
+					  mavutil.mavlink.MAV_FRAME_GLOBAL,
+                                         mavutil.mavlink.MAV_CMD_DO_FENCE_ENABLE, 1, 2, 0, 0, 0, 0, 0)
 # what do you think this does
 def dropPayload():
     master.mav.command_int_send(master.target_system, master.target_component,
@@ -127,13 +130,10 @@ def dropPayload():
 
 # Finds the drop point for the plane, in which it drops a payload
 def findDropPoint(targetLat: float, targetLong: float):
-    # CHANGE THIS WITH THE MATLAB ALGORITHM
     lowLat, highLat = targetLat-.5, targetLat+.5
     lowLong, highLong = targetLong-.5, targetLong+.5
-    #
     while(1):
-        curLat = 0
-        curLong = 0
+        curLat, curLong = getPosition()
         if (lowLat < curLat and highLat > curLat and lowLong < curLong and highLong > curLong):
             dropPayload()
             break
