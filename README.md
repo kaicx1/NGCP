@@ -25,7 +25,7 @@ pip install pymavlink
 cd NGCP/pymavlink
 mkdir ArduPlane
 cd ArduPlane
-sim_vehicle --map --console
+sim_vehicle.py -v ArduPlane -L CPP --map --console
 ```
 
 **IN A DIFFERENT TERMINAL**
